@@ -3,7 +3,7 @@
 #include <pspdisplay.h>
 
 // PSP_MODULE_INFO is required
-PSP_MODULE_INFO("Hello World", 0, 1, 0);
+PSP_MODULE_INFO("Lifecounter", 0, 1, 0);
 PSP_MAIN_THREAD_ATTR(PSP_THREAD_ATTR_USER);
 
 int exit_callback(int arg1, int arg2, void *common) {
@@ -29,11 +29,10 @@ int main(void)  {
     // Use above functions to make exiting possible
     setup_callbacks();
     
-    // Print Hello World! on a debug screen on a loop
     pspDebugScreenInit();
     while(1) {
         pspDebugScreenSetXY(0, 0);
-        pspDebugScreenPrintf("Hello World!");
+        pspDebugScreenPrintf("Lifecounter!");
         sceDisplayWaitVblankStart();
     }
 
