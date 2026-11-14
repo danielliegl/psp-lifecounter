@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${env:PSPDEV}/psp/include",
+                "${env:PSPDEV}/psp/sdk/include"
+            ]
+        }
+    ],
+    "version": 4
+}
