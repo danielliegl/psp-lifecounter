@@ -50,7 +50,7 @@ int main(void)
   int player_one_life = 20;
   int player_two_life = 20;
 
-  bool pressing = false;
+  int pressing = 0;
 
   while (!done)
   {
