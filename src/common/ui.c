@@ -91,6 +91,7 @@ void cleanUpUi() {
   SDL_Quit();
 }
 
+//TODO: fix rendering numbers <= 0
 struct RenderedTexture renderText(int life_total, struct RenderedTexture* rendered_texture){
   
   // if the life total did not change, do not rerender.
