@@ -2,6 +2,7 @@
 #define UI_H
 
 #include <player.h>
+#include <SDL3/SDL.h>
 
 struct RenderedTexture {
     SDL_Texture* texture;
@@ -12,6 +13,6 @@ struct RenderedTexture {
 int initUi();
 void drawUi(struct PlayerData player_one, struct PlayerData player_two);
 void cleanUpUi();
-struct RenderedTexture renderText(char* text, struct RenderedTexture* rendered_texture);
+struct RenderedTexture renderText(int life_total, struct RenderedTexture* rendered_texture);
 
 #endif

@@ -1,5 +1,7 @@
 #include <player.h>
 #include <ui.h>
+#include <math.h>
+#include <stdlib.h>
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -73,7 +75,7 @@ void drawUi(struct PlayerData player_one, struct PlayerData player_two)
   }
 
   char* life_total_string = malloc(sizeof(char)*(int)log10(player_one.life_total));
-  player_one_texture = renderText(life_total_string);
+  player_one_texture = renderText(player_one.life_total, &player_one_texture);
 
   SDL_SetRenderDrawColor(renderer, bg_color.r, bg_color.g, bg_color.b, bg_color.a);
   SDL_RenderClear(renderer);
