@@ -99,6 +99,7 @@ struct RenderedTexture renderText(int life_total, struct RenderedTexture* render
   }
 
   char* text = malloc(sizeof(char)*(int)log10(life_total));
+  itoa(life_total, text, 10);
 
   // Create a texture using a string and SDL ttf
   SDL_Surface *surface = TTF_RenderText_Solid(font, text, SDL_strlen(text), text_color);
