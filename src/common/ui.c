@@ -1,4 +1,5 @@
 #include <player.h>
+#include <ui.h>
 
 #include <SDL3/SDL.h>
 #include <SDL3_ttf/SDL_ttf.h>
@@ -9,11 +10,15 @@
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 TTF_Font *font = NULL;
-SDL_Texture *texture = NULL;
-SDL_FRect text_rect = {0, 0, 0, 0};
+
+// set text and background colors
+SDL_Color text_color = {0x00, 0x00, 0x00, 0xff};
 SDL_Color bg_color = {0xff, 0xff, 0xff, 0xff};
 
 SDL_Event event;
+
+struct RenderedTexture player_one_texture;
+struct RenderedTexture player_two_texture;
 
 int initUi()
 {
@@ -52,33 +57,6 @@ int initUi()
     return 4;
   }
 
-  // set text and background colors
-  SDL_Color text_color = {0x00, 0x00, 0x00, 0xff};
-  
-
-  // Create a texture using a string and SDL ttf
-  const char *text = "Hello World!";
-  SDL_Surface *surface = TTF_RenderText_Solid(font, text, SDL_strlen(text), text_color);
-  if (!surface)
-  {
-    SDL_Log("Couldn't render text: %s", SDL_GetError());
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_Quit();
-    SDL_Quit();
-    return 5;
-  }
-  texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-  // Get text dimensions
-  text_rect.w = (float)surface->w;
-  text_rect.h = (float)surface->h;
-
-  SDL_DestroySurface(surface);
-
-  text_rect.x = (SCREEN_WIDTH - text_rect.w) / 2.0f;
-  text_rect.y = text_rect.h + 30.0f;
-
   return 0;
 }
 
@@ -94,16 +72,56 @@ void drawUi(struct PlayerData player_one, struct PlayerData player_two)
     }
   }
 
+  char* life_total_string = malloc(sizeof(char)*(int)log10(player_one.life_total));
+  player_one_texture = renderText(life_total_string);
+
   SDL_SetRenderDrawColor(renderer, bg_color.r, bg_color.g, bg_color.b, bg_color.a);
   SDL_RenderClear(renderer);
-  SDL_RenderTexture(renderer, texture, NULL, &text_rect);
+  SDL_RenderTexture(renderer, player_one_texture.texture, NULL, &player_one_texture.text_rect);
   SDL_RenderPresent(renderer);
 }
 
 void cleanUpUi() {
-  SDL_DestroyTexture(texture);
+  SDL_DestroyTexture(player_one_texture.texture);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   TTF_Quit();
   SDL_Quit();
+}
+
+struct RenderedTexture renderText(int life_total, struct RenderedTexture* rendered_texture){
+  
+  // if the life total did not change, do not rerender.
+  if(rendered_texture->number == life_total) {
+    return *rendered_texture;
+  }
+
+  char* text = malloc(sizeof(char)*(int)log10(life_total));
+
+  // Create a texture using a string and SDL ttf
+  SDL_Surface *surface = TTF_RenderText_Solid(font, text, SDL_strlen(text), text_color);
+  if (!surface)
+  {
+    SDL_Log("Couldn't render text: %s", SDL_GetError());
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    TTF_Quit();
+    SDL_Quit();
+  }
+  SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+  SDL_FRect text_rect = {0,0,0,0};
+
+  // Get text dimensions
+  text_rect.w = (float)surface->w;
+  text_rect.h = (float)surface->h;
+
+  SDL_DestroySurface(surface);
+  free(text);
+
+  text_rect.x = (SCREEN_WIDTH - text_rect.w) / 2.0f;
+  text_rect.y = text_rect.h + 30.0f;
+
+  struct RenderedTexture retval = {texture, text_rect, life_total};
+  return retval;
 }
