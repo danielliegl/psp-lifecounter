@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <./common/callback.h>
+#include <./common/player.h>
 
 PSP_MODULE_INFO("Lifecounter", 0, 1, 1);
 
@@ -21,8 +22,8 @@ int main(void)
   sceCtrlSetSamplingCycle(0);
   sceCtrlSetSamplingMode(PSP_CTRL_MODE_DIGITAL);
 
-  int player_one_life = 20;
-  int player_two_life = 20;
+  struct PlayerData player_one = initPlayerData();
+  struct PlayerData player_two = initPlayerData();
 
   int pressing = 0;
 
@@ -38,21 +39,21 @@ int main(void)
         //player one life controls
         if (pad.Buttons & PSP_CTRL_RIGHT)
         {
-          player_one_life++;
+          player_one.life_total++;
         }
         if (pad.Buttons & PSP_CTRL_LEFT)
         {
-          player_one_life--;
+          player_one.life_total--;
         }
         
         //player two life controls
         if (pad.Buttons & PSP_CTRL_SQUARE)
         {
-          player_two_life++;
+          player_two.life_total++;
         }
         if (pad.Buttons & PSP_CTRL_CIRCLE)
         {
-          player_two_life--;
+          player_two.life_total--;
         }
         pressing = 1;
       }
@@ -60,7 +61,7 @@ int main(void)
       pressing = 0;
     }
 
-    printf("Player One: %d - Player Two: %d", player_one_life, player_two_life);
+    printf("Player One: %d - Player Two: %d", player_one.life_total, player_two.life_total);
   }
 
   sceKernelExitGame();
