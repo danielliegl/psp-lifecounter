@@ -6,6 +6,7 @@ add_executable(${PROJECT_NAME}
   src/main.c
   src/common/callback.c
   src/common/player.c
+  src/common/ui.c
 )
 
 target_include_directories(${PROJECT_NAME} PRIVATE
@@ -13,11 +14,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     src/common
 )
 
+find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
+find_package(SDL3_ttf REQUIRED)
+
 target_link_libraries(${PROJECT_NAME} PRIVATE
     pspdebug
     pspdisplay
     pspge
     pspctrl
+    SDL3::SDL3
+    SDL3_ttf::SDL3_ttf
 )
 
 # Create an EBOOT.PBP file

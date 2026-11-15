@@ -1,22 +1,25 @@
-#include <pspuser.h>
-#include <pspdebug.h>
+#include <common/callback.h>
+#include <common/player.h>
+#include <common/ui.h>
 #include <pspctrl.h>
-#include <stdlib.h>
-#include <string.h>
-#include <./common/callback.h>
-#include <./common/player.h>
+#include <pspuser.h>
 
-PSP_MODULE_INFO("Lifecounter", 0, 1, 1);
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
 
-PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
-
-#define printf pspDebugScreenPrintf
-
-int main(void)
+int main(int argc, char **argv)
 {
+
+  (void) argc;
+  (void) argv;
+
+  int ui_init_status = initUi();
+  if (ui_init_status != 0) {
+    return ui_init_status;
+  }
+
   SceCtrlData pad;
 
-  pspDebugScreenInit();
   setupExitCallback();
 
   sceCtrlSetSamplingCycle(0);
@@ -29,7 +32,6 @@ int main(void)
 
   while (isRunning())
   {
-    pspDebugScreenSetXY(0, 2);
     sceCtrlReadBufferPositive(&pad, 1);
 
     if (pad.Buttons != 0)
@@ -61,9 +63,10 @@ int main(void)
       pressing = 0;
     }
 
-    printf("Player One: %d - Player Two: %d", player_one.life_total, player_two.life_total);
+    drawUi(player_one, player_two);
   }
 
-  sceKernelExitGame();
+  cleanUpUi();
+
   return 0;
 }
