@@ -48,7 +48,7 @@ int initUi()
   }
 
   // load the font file. make sure it is in the same directory as the eboot file
-  font = TTF_OpenFont("Roboto-SemiBold.ttf", 40);
+  font = TTF_OpenFont("Roboto-SemiBold.ttf", 80);
   if (!font)
   {
     SDL_Log("Couldn't load font: %s", SDL_GetError());
@@ -74,12 +74,11 @@ void drawUi(struct PlayerData player_one, struct PlayerData player_two)
     }
   }
 
-  char* life_total_string = malloc(sizeof(char)*(int)log10(player_one.life_total));
   player_one_texture = renderText(player_one.life_total, &player_one_texture);
 
   SDL_SetRenderDrawColor(renderer, bg_color.r, bg_color.g, bg_color.b, bg_color.a);
   SDL_RenderClear(renderer);
-  SDL_RenderTexture(renderer, player_one_texture.texture, NULL, &player_one_texture.text_rect);
+  SDL_RenderTextureRotated(renderer, player_one_texture.texture, NULL, &player_one_texture.text_rect, 90, NULL, SDL_FLIP_NONE);
   SDL_RenderPresent(renderer);
 }
 
@@ -123,8 +122,8 @@ struct RenderedTexture renderText(int life_total, struct RenderedTexture* render
   SDL_DestroySurface(surface);
   free(text);
 
-  text_rect.x = (SCREEN_WIDTH - text_rect.w) / 2.0f;
-  text_rect.y = text_rect.h + 30.0f;
+  text_rect.x = (SCREEN_WIDTH - text_rect.h) / 3.0f;
+  text_rect.y = (SCREEN_HEIGHT - text_rect.w) / 2.0f;
 
   struct RenderedTexture retval = {texture, text_rect, life_total};
   return retval;
