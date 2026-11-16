@@ -63,7 +63,9 @@ int main(int argc, char **argv)
       pressing = 0;
     }
 
-    drawUi(player_one, player_two);
+    if(drawUi(player_one, player_two) != 0) {
+      return 1;
+    }
   }
 
   cleanUpUi();

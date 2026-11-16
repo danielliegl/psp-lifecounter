@@ -14,8 +14,8 @@ SDL_Renderer *renderer = NULL;
 TTF_Font *font = NULL;
 
 // set text and background colors
-SDL_Color text_color = {0x00, 0x00, 0x00, 0xff};
-SDL_Color bg_color = {0xff, 0xff, 0xff, 0xff};
+SDL_Color text_color = {0xB9, 0xD8, 0xC2, 0xff}; // #185, 216, 194
+SDL_Color bg_color = {0x0D, 0x18, 0x21, 0xff}; // #13, 24, 33
 
 SDL_Event event;
 
@@ -62,7 +62,7 @@ int initUi()
   return 0;
 }
 
-void drawUi(struct PlayerData player_one, struct PlayerData player_two)
+int drawUi(struct PlayerData player_one, struct PlayerData player_two)
 {
   if (SDL_PollEvent(&event))
   {
@@ -74,12 +74,20 @@ void drawUi(struct PlayerData player_one, struct PlayerData player_two)
     }
   }
 
-  player_one_texture = renderText(player_one.life_total, &player_one_texture);
+  player_one_texture = renderText(player_one.life_total, &player_one_texture, PLAYER_ONE);
+  player_two_texture = renderText(player_two.life_total, &player_two_texture, PLAYER_TWO);
+
+  if(player_one_texture.texture == NULL || player_two_texture.texture == NULL) {
+    return 1;
+  }
 
   SDL_SetRenderDrawColor(renderer, bg_color.r, bg_color.g, bg_color.b, bg_color.a);
   SDL_RenderClear(renderer);
   SDL_RenderTextureRotated(renderer, player_one_texture.texture, NULL, &player_one_texture.text_rect, 90, NULL, SDL_FLIP_NONE);
+  SDL_RenderTextureRotated(renderer, player_two_texture.texture, NULL, &player_two_texture.text_rect, -90, NULL, SDL_FLIP_NONE);
+  
   SDL_RenderPresent(renderer);
+  return 0;
 }
 
 void cleanUpUi() {
@@ -90,15 +98,15 @@ void cleanUpUi() {
   SDL_Quit();
 }
 
-//TODO: fix rendering numbers <= 0
-struct RenderedTexture renderText(int life_total, struct RenderedTexture* rendered_texture){
+struct RenderedTexture renderText(int life_total, struct RenderedTexture* rendered_texture, int player){
   
   // if the life total did not change, do not rerender.
   if(rendered_texture->number == life_total) {
     return *rendered_texture;
   }
 
-  char* text = malloc(sizeof(char)*(int)log10(life_total));
+  char text[10];
+
   itoa(life_total, text, 10);
 
   // Create a texture using a string and SDL ttf
@@ -110,6 +118,8 @@ struct RenderedTexture renderText(int life_total, struct RenderedTexture* render
     SDL_DestroyWindow(window);
     TTF_Quit();
     SDL_Quit();
+    struct RenderedTexture retVal = {NULL, {0,0,0,0}, 0};
+    return retVal;
   }
   SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -120,10 +130,14 @@ struct RenderedTexture renderText(int life_total, struct RenderedTexture* render
   text_rect.h = (float)surface->h;
 
   SDL_DestroySurface(surface);
-  free(text);
 
-  text_rect.x = (SCREEN_WIDTH - text_rect.h) / 3.0f;
-  text_rect.y = (SCREEN_HEIGHT - text_rect.w) / 2.0f;
+  if(player == PLAYER_ONE) {
+    text_rect.x = (SCREEN_WIDTH) / 4.0f - text_rect.w / 2.0f;
+    text_rect.y = (SCREEN_HEIGHT - text_rect.h) / 2.0f;
+  } else if (player == PLAYER_TWO) {
+    text_rect.x = SCREEN_WIDTH - (SCREEN_WIDTH) / 4.0f - text_rect.w / 2.0f;
+    text_rect.y = (SCREEN_HEIGHT - text_rect.h) / 2.0f;
+  }
 
   struct RenderedTexture retval = {texture, text_rect, life_total};
   return retval;
