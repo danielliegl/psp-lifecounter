@@ -10,6 +10,8 @@ Right - Increase Player One Life Total
 Circle - Decrease Player Two Life Total
 Square - Increase Player Two Life Total
 
+Start - Reset Life Totals to 20
+
 ## Credits
 
 Font: [Roboto](https://github.com/googlefonts/roboto-3-classic)

@@ -57,6 +57,11 @@ int main(int argc, char **argv)
         {
           player_two.life_total--;
         }
+        if (pad.Buttons & PSP_CTRL_START)
+        {
+          player_one.life_total = 20;
+          player_two.life_total = 20;
+        }
         pressing = 1;
       }
     } else {
